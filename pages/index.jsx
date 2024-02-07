@@ -15,8 +15,8 @@ import { Inter } from "next/font/google";
 import useSWR from "swr";
 import { useState, useEffect } from "react";
 import { Pagination, Accordion } from "react-bootstrap";
-import ListingDetails from "@/components/ListingDetails";
-import PageHeader from "@/components/PageHeader";
+import ListingDetails from "@/components/ListingDetails.jsx";
+import PageHeader from "@/components/PageHeader.jsx";
 
 const inter = Inter({ subsets: ["latin"] });
 
