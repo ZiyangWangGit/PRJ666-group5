@@ -4,7 +4,7 @@
 // import Error from "next/error";
 // import PageHeader from "@/components/PageHeader.jsx";
 
-// export default function Ids(){
+export default function Ids(){
 //     const router = useRouter();
 //     const { id } = router.query;
 
@@ -15,12 +15,12 @@
 //     } else if (error) {
 //         return <Error statusCode={404}/>
 //     } else {
-//         return (
-//             <>
-//             {/* //     <PageHeader text={listing.name}/> */}
-//             {/* //     <ListingDetails listing={<ListingDetails listing={listing}/>}/>             */}
-//             </>
-//         )
+    return (
+        <>
+            {/* <PageHeader text={listing.name}/> */}
+            {/* <ListingDetails listing={<ListingDetails listing={listing}/>}/>             */}
+        </>
+    )
 //     }
 
-// }
+}
