@@ -1,5 +1,5 @@
 import { Container } from "react-bootstrap";
-import Card from 'react-bootstrap/card';
+import Card from 'react-bootstrap/Card';
 
 export default function PageHeader({text}) {
     return (
