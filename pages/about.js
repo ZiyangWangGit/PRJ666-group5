@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Card from "react-bootstrap/card";
+import Card from "react-bootstrap/Card";
 import ListingDetails from "@/components/ListingDetails";
 import PageHeader from "@/components/PageHeader";
 
