@@ -52,7 +52,7 @@ export default function Home() {
         {pageData.map((listing) => (
           <Accordion.Item eventKey={listing._id}>
             <Accordion.Header>
-              <strong>{listing.name}</strong> {listing.address.street}
+              <strong>{listing.name}</strong>&nbsp; {listing.address.street}
             </Accordion.Header>
               <Accordion.Body>
                 <ListingDetails listing={listing} />
