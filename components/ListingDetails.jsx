@@ -22,7 +22,7 @@ export default function ListingDetails({ listing }) {
         <div>
             {listing.neighborhood_overview ? listing.neighborhood_overview : ""}
             <br/><br/>
-            <strong>Price: </strong>
+            <strong>Price: </strong>$
             {listing.price.toFixed(2)}
             <br/>
             <strong>Room: </strong>
