@@ -3,7 +3,7 @@ import Layout from "@/components/Layout.jsx";
 import { SWRConfig } from "swr";
 
 const fetcher = async (...args) => {
-  const response = await fetch(...args);
+  const response = await fetch(...args); 
 
   if (!response.ok) {
     throw new Error(`Request failed with status: ${response.status}`);

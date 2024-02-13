@@ -28,7 +28,7 @@ export default function Home() {
     `https://a1-p3.onrender.com/api/listings?page=${page}&perPage=10`
   );
 
-  console.log(data);
+  console.log("consoled data",data);
 
   useEffect(() => {
     if (data) {
