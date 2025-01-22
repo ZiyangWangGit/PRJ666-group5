@@ -1,9 +1,10 @@
 import "bootstrap/dist/css/bootstrap.min.css";
+import "../styles/globals.css";
 import Layout from "@/components/Layout.jsx";
 import { SWRConfig } from "swr";
 
 const fetcher = async (...args) => {
-  const response = await fetch(...args); 
+  const response = await fetch(...args);
 
   if (!response.ok) {
     throw new Error(`Request failed with status: ${response.status}`);
@@ -21,4 +22,3 @@ export default function App({ Component, pageProps }) {
     </SWRConfig>
   );
 }
-
