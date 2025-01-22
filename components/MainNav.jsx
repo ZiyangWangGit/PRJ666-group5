@@ -22,6 +22,9 @@ export default function MainNav() {
               <Link href="/courses" passHref legacyBehavior>
                 <Nav.Link>Courses</Nav.Link>
               </Link>
+              <Link href="/signin" passHref legacyBehavior>
+                <Nav.Link>Signin</Nav.Link>
+              </Link>
             </Nav>
           </Navbar.Collapse>
         </Container>
