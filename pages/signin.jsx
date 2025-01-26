@@ -48,6 +48,8 @@ const SignIn = () => {
       const user = userCredential.user;
       setIsSignedIn(true);
       setUserEmail(user.email);
+      await fetchUserData();
+
     } catch (error) {
       const errorCode = error.code;
       const errorMessage = error.message;
@@ -101,6 +103,14 @@ const SignIn = () => {
     }
   };
 
+  // After successful sign-in, redirect to another page 
+  const redirectToProfile = () => {
+    router.push({
+      pathname: '/', // Path to profile page
+      query: { id: userSchoolId, name: userName, email: userEmail }, // Pass the user data as query params
+    });
+  };
+
   return (
     <MDBContainer className="my-5" style={{ backgroundColor: "#9A616D", padding: "20px" }}>
       {isSignedIn ? (
@@ -109,9 +119,9 @@ const SignIn = () => {
             <h1>Welcome, {userName || userEmail || userSchoolId}!</h1>
             <p>{userName} ({userTitle}, School ID: {userSchoolId})</p>
             <p>You have successfully signed in.</p>
-            <MDBBtn color="dark" onClick={handleLogout}>
-              Logout
-            </MDBBtn>
+            <MDBBtn color="dark" onClick={redirectToProfile}>Go to Profile</MDBBtn>
+            <br /><br />
+            <MDBBtn color="dark" onClick={handleLogout}>Logout</MDBBtn>
           </MDBCardBody>
         </MDBCard>
       ) : (
