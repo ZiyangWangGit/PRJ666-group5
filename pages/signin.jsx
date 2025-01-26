@@ -48,24 +48,11 @@ const SignIn = () => {
       const user = userCredential.user;
       setIsSignedIn(true);
       setUserEmail(user.email);
-      navigateToProfile();
     } catch (error) {
       const errorCode = error.code;
       const errorMessage = error.message;
       setErrorMessage(errorMessage);
     }
-  };
-
-  const navigateToProfile = () => {
-    // Navigate to profile page and pass user data as query parameters
-    router.push({
-      pathname: '/profile',
-      query: {
-        name: userName,
-        email: userEmail,
-        school_id: userSchoolId
-      }
-    });
   };
 
   const fetchUserData = async () => {
