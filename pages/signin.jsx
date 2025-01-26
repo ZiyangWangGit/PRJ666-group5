@@ -3,7 +3,6 @@ import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendP
 import { collection, getDocs } from "firebase/firestore";
 import { useRouter } from "next/router";
 import { app, db } from "../lib/firebase";
-//npm install mdb-react-ui-kit
 import {
   MDBBtn,
   MDBContainer,
@@ -24,6 +23,7 @@ const SignIn = () => {
   const [userEmail, setUserEmail] = useState("");
   const [userName, setUserName] = useState("");
   const [userTitle, setUserTitle] = useState("");
+  const [userSchoolId, setUserSchoolId] = useState("");
   const auth = getAuth(app);
   const router = useRouter();
 
@@ -48,11 +48,24 @@ const SignIn = () => {
       const user = userCredential.user;
       setIsSignedIn(true);
       setUserEmail(user.email);
+      navigateToProfile();
     } catch (error) {
       const errorCode = error.code;
       const errorMessage = error.message;
       setErrorMessage(errorMessage);
     }
+  };
+
+  const navigateToProfile = () => {
+    // Navigate to profile page and pass user data as query parameters
+    router.push({
+      pathname: '/profile',
+      query: {
+        name: userName,
+        email: userEmail,
+        school_id: userSchoolId
+      }
+    });
   };
 
   const fetchUserData = async () => {
@@ -62,6 +75,7 @@ const SignIn = () => {
         if (doc.id === userEmail) {
           setUserName(doc.data().name);  
           setUserTitle(doc.data().title);  
+          setUserSchoolId(doc.data().school_id);
         }
       });
     } catch (error) {
@@ -105,8 +119,8 @@ const SignIn = () => {
       {isSignedIn ? (
         <MDBCard>
           <MDBCardBody className="text-center">
-            <h1>Welcome, {userName || userEmail}!</h1>
-            <p>{userName} ({userTitle})</p>
+            <h1>Welcome, {userName || userEmail || userSchoolId}!</h1>
+            <p>{userName} ({userTitle}, School ID: {userSchoolId})</p>
             <p>You have successfully signed in.</p>
             <MDBBtn color="dark" onClick={handleLogout}>
               Logout
