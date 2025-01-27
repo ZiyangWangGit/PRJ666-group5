@@ -30,7 +30,11 @@ export default function MainNav() {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
               {/* Link to the Profile page */}
-              <Link href={`/?id=${userInfo.id}&name=${userInfo.name}&email=${userInfo.email}`} passHref legacyBehavior>
+              <Link
+                href={`/?id=${userInfo.id}&name=${userInfo.name}&email=${userInfo.email}`}
+                passHref
+                legacyBehavior
+              >
                 <Nav.Link>Profile</Nav.Link>
               </Link>
               {/* Link to the Courses page */}

@@ -1,14 +1,35 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Inter } from "next/font/google";
 import Head from "next/head";
 import { Card, Col, Row } from "react-bootstrap";
 import { useRouter } from "next/router";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { app } from "../lib/firebase"; // Import your Firebase configuration
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Courses() {
   const router = useRouter();
   let [page, setPage] = useState(1);
+  const [userEmail, setUserEmail] = useState("");
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const auth = getAuth(app);
+
+  useEffect(() => {
+    const stateChange = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setIsSignedIn(true);
+        setUserEmail(user.email);
+        // Fetch user data here if needed
+      } else {
+        setIsSignedIn(false);
+        setUserEmail("");
+        setUserTitle("");
+      }
+    });
+
+    return () => stateChange();
+  }, [auth]);
 
   // Function to handle the previous page button click
   const previous = () => {
@@ -45,14 +66,31 @@ export default function Courses() {
           <Col key={course.id}>
             {/* Card component for each course */}
             <Card
-              className={`h-100 ${course.locked ? "locked-card" : ""}`}
-              onClick={() => !course.locked && router.push(course.url)}
-              style={{ cursor: course.locked ? "not-allowed" : "pointer" }}
+              className={`h-100 ${
+                course.locked && userEmail !== "12345@gmail.com"
+                  ? "locked-card"
+                  : ""
+              }`}
+              onClick={() =>
+                (!course.locked || userEmail === "12345@gmail.com") &&
+                router.push(course.url)
+              }
+              style={{
+                cursor:
+                  course.locked && userEmail !== "12345@gmail.com"
+                    ? "not-allowed"
+                    : "pointer",
+              }}
             >
               <Card.Body>
                 <Card.Title>{course.title}</Card.Title>
                 <Card.Text>{course.description}</Card.Text>
-                {course.locked && <Card.Text>(Locked)</Card.Text>}
+                {course.locked && userEmail === "12345@gmail.com" && (
+                  <Card.Text>(Not visible to students)</Card.Text>
+                )}
+                {course.locked && userEmail !== "12345@gmail.com" && (
+                  <Card.Text>(Locked)</Card.Text>
+                )}
               </Card.Body>
             </Card>
           </Col>

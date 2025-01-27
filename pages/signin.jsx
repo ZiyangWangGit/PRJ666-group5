@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "firebase/auth";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+  sendPasswordResetEmail,
+} from "firebase/auth";
 import { collection, getDocs } from "firebase/firestore";
 import { useRouter } from "next/router";
 import { app, db } from "../lib/firebase";
@@ -12,7 +18,7 @@ import {
   MDBRow,
   MDBCol,
   MDBIcon,
-  MDBInput
+  MDBInput,
 } from "mdb-react-ui-kit";
 
 const SignIn = () => {
@@ -44,12 +50,15 @@ const SignIn = () => {
 
   const signIn = async (email, password) => {
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = userCredential.user;
       setIsSignedIn(true);
       setUserEmail(user.email);
-      await fetchUserData();
-
+      await fetchUserData(user.email);
     } catch (error) {
       const errorCode = error.code;
       const errorMessage = error.message;
@@ -57,13 +66,13 @@ const SignIn = () => {
     }
   };
 
-  const fetchUserData = async () => {
+  const fetchUserData = async (userEmail) => {
     try {
       const querySnapshot = await getDocs(collection(db, "contacts"));
       querySnapshot.forEach((doc) => {
         if (doc.id === userEmail) {
-          setUserName(doc.data().name);  
-          setUserTitle(doc.data().title);  
+          setUserName(doc.data().name);
+          setUserTitle(doc.data().title);
           setUserSchoolId(doc.data().school_id);
         }
       });
@@ -74,7 +83,7 @@ const SignIn = () => {
 
   useEffect(() => {
     if (userEmail) {
-      fetchUserData(); // Fetch data when user email is set
+      fetchUserData(userEmail); // Fetch data when user email is set
     }
   }, [userEmail]);
 
@@ -99,29 +108,41 @@ const SignIn = () => {
       await sendPasswordResetEmail(auth, email);
       alert("A password reset link has been sent to your email.");
     } catch (error) {
-      setErrorMessage("Failed to send password reset email. Please enter your email address.");
+      setErrorMessage(
+        "Failed to send password reset email. Please enter your email address."
+      );
     }
   };
 
-  // After successful sign-in, redirect to another page 
+  // After successful sign-in, redirect to another page
   const redirectToProfile = () => {
     router.push({
-      pathname: '/', // Path to profile page
+      pathname: "/", // Path to profile page
       query: { id: userSchoolId, name: userName, email: userEmail }, // Pass the user data as query params
     });
   };
 
   return (
-    <MDBContainer className="my-5" style={{ backgroundColor: "#9A616D", padding: "20px" }}>
+    <MDBContainer
+      className="my-5"
+      style={{ backgroundColor: "#9A616D", padding: "20px" }}
+    >
       {isSignedIn ? (
         <MDBCard>
           <MDBCardBody className="text-center">
             <h1>Welcome, {userName || userEmail || userSchoolId}!</h1>
-            <p>{userName} ({userTitle}, School ID: {userSchoolId})</p>
+            <p>
+              {userName} ({userTitle}, School ID: {userSchoolId})
+            </p>
             <p>You have successfully signed in.</p>
-            <MDBBtn color="dark" onClick={redirectToProfile}>Go to Profile</MDBBtn>
-            <br /><br />
-            <MDBBtn color="dark" onClick={handleLogout}>Logout</MDBBtn>
+            <MDBBtn color="dark" onClick={redirectToProfile}>
+              Go to Profile
+            </MDBBtn>
+            <br />
+            <br />
+            <MDBBtn color="dark" onClick={handleLogout}>
+              Logout
+            </MDBBtn>
           </MDBCardBody>
         </MDBCard>
       ) : (
@@ -138,11 +159,18 @@ const SignIn = () => {
             <MDBCol md="6">
               <MDBCardBody className="d-flex flex-column">
                 <div className="d-flex flex-row mt-2">
-                  <MDBIcon fas icon="cubes fa-3x me-3" style={{ color: "#ff6219" }} />
+                  <MDBIcon
+                    fas
+                    icon="cubes fa-3x me-3"
+                    style={{ color: "#ff6219" }}
+                  />
                   <span className="h1 fw-bold mb-0">Logo</span>
                 </div>
 
-                <h5 className="fw-normal my-4 pb-3" style={{ letterSpacing: "1px" }}>
+                <h5
+                  className="fw-normal my-4 pb-3"
+                  style={{ letterSpacing: "1px" }}
+                >
                   Sign into your account
                 </h5>
 
@@ -167,12 +195,23 @@ const SignIn = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />
-                  {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
-                  <MDBBtn className="mb-4 px-5" color="dark" size="lg" type="submit">
+                  {errorMessage && (
+                    <p style={{ color: "red" }}>{errorMessage}</p>
+                  )}
+                  <MDBBtn
+                    className="mb-4 px-5"
+                    color="dark"
+                    size="lg"
+                    type="submit"
+                  >
                     Login
                   </MDBBtn>
                 </form>
-                <a className="small text-muted" onClick={handlePasswordReset} style={{ cursor: "pointer" }}>
+                <a
+                  className="small text-muted"
+                  onClick={handlePasswordReset}
+                  style={{ cursor: "pointer" }}
+                >
                   Forgot password?
                 </a>
               </MDBCardBody>
