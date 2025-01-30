@@ -60,10 +60,23 @@ const SignIn = () => {
       await fetchUserData(user.email);
     } catch (error) {
       const errorCode = error.code;
-      const errorMessage = error.message;
+      let errorMessage = '';
+  
+      // Custom error messages based on error codes
+      if (errorCode === 'auth/invalid-credential') {
+        errorMessage = 'You entered the wrong password';
+      } else if (errorCode === 'auth/user-not-found') {
+        errorMessage = 'No user found with this email';
+      } else if (errorCode === 'auth/too-many-requests') {
+        errorMessage = 'Too many attempts. Please try again later.';
+      } else {
+        errorMessage = 'An error occurred. Please try again.';
+      }
+  
       setErrorMessage(errorMessage);
     }
   };
+  
 
   const fetchUserData = async (userEmail) => {
     try {
