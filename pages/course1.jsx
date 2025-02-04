@@ -61,7 +61,7 @@ export default function Course1() {
         <title>Course 1</title>
       </Head>
       <h1>Course 1</h1>
-      
+
       {/* Upload Section */}
       <Card className="my-3">
         <Card.Body>
