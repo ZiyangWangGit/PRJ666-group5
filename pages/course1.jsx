@@ -14,18 +14,21 @@ import {
   doc,
 } from "firebase/firestore";
 import { app } from "../lib/firebase";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useUser } from "../context/UserContext"; // Import the useUser hook
+
+// import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const storage = getStorage(app);
 const db = getFirestore(app);
 
 export default function Course1() {
   const router = useRouter();
+  const { user } = useUser(); // Get the user object from the context
   const [materials, setMaterials] = useState([]);
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [userEmail, setUserEmail] = useState("");
-  const auth = getAuth(app);
+  // const [userEmail, setUserEmail] = useState("");
+  // const auth = getAuth(app);
 
   // Fetch course materials
   const fetchMaterials = async () => {
@@ -67,19 +70,19 @@ export default function Course1() {
     fetchData();
   }, []);
 
-  // Monitor authentication state
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUserEmail(user.email);
-        console.log("User Email:", user.email); // Debug log
-      } else {
-        setUserEmail("");
-      }
-    });
+  // // Monitor authentication state
+  // useEffect(() => {
+  //   const unsubscribe = onAuthStateChanged(auth, (user) => {
+  //     if (user) {
+  //       setUserEmail(user.email);
+  //       console.log("User Email:", user.email); // Debug log
+  //     } else {
+  //       setUserEmail("");
+  //     }
+  //   });
 
-    return () => unsubscribe();
-  }, [auth]);
+  //   return () => unsubscribe();
+  // }, [auth]);
 
   // Handle student submission
   const handleSubmission = async (materialId, file) => {
@@ -92,7 +95,7 @@ export default function Course1() {
 
       await addDoc(collection(db, "submissions"), {
         materialId,
-        studentEmail: userEmail, // Ensure this is stored properly
+        studentEmail: user.email, // Ensure this is stored properly
         fileName: file.name,
         fileUrl: url,
         submittedAt: new Date(),
