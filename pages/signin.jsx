@@ -218,6 +218,10 @@ const SignIn = () => {
     }
   };
 
+  const redirectToProfile = () => {
+    router.push("/");
+  };
+
   return (
     <div className="body">
       <MDBContainer fluid>
