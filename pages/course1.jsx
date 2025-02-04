@@ -5,7 +5,14 @@ import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import Collapse from "react-bootstrap/Collapse";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { getFirestore, collection, addDoc, getDocs, updateDoc, doc } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  updateDoc,
+  doc,
+} from "firebase/firestore";
 import { app } from "../lib/firebase";
 
 const storage = getStorage(app);
@@ -24,7 +31,7 @@ export default function Course1() {
     const fileRef = ref(storage, `course_materials/${file.name}`);
     await uploadBytes(fileRef, file);
     const url = await getDownloadURL(fileRef);
-    
+
     await addDoc(collection(db, "course_materials"), {
       name: file.name,
       url,
@@ -39,7 +46,10 @@ export default function Course1() {
   // Fetch course materials
   const fetchMaterials = async () => {
     const querySnapshot = await getDocs(collection(db, "course_materials"));
-    const data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const data = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
     setMaterials(data);
     setLoading(false);
   };
@@ -70,25 +80,39 @@ export default function Course1() {
           <Button onClick={handleUpload}>Upload</Button>
         </Card.Body>
       </Card>
-      
+
       {/* List Materials */}
       <h2>Materials</h2>
-      {loading ? <p>Loading...</p> : materials.map((material) => (
-        <Card key={material.id} className="my-2">
-          <Card.Body>
-            <Card.Title>{material.name}</Card.Title>
-            {material.visible ? (
-              <a href={material.url} target="_blank" rel="noopener noreferrer">View</a>
-            ) : (
-              <p><i>Hidden from students</i></p>
-            )}
-            <Button onClick={() => toggleVisibility(material.id, material.visible)}>
-              {material.visible ? "Hide" : "Show"}
-            </Button>
-          </Card.Body>
-        </Card>
-      ))}
-      
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        materials.map((material) => (
+          <Card key={material.id} className="my-2">
+            <Card.Body>
+              <Card.Title>{material.name}</Card.Title>
+              {material.visible ? (
+                <a
+                  href={material.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View
+                </a>
+              ) : (
+                <p>
+                  <i>Hidden from students</i>
+                </p>
+              )}
+              <Button
+                onClick={() => toggleVisibility(material.id, material.visible)}
+              >
+                {material.visible ? "Hide" : "Show"}
+              </Button>
+            </Card.Body>
+          </Card>
+        ))
+      )}
+
       <button onClick={() => router.back()}>Back</button>
     </div>
   );

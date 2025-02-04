@@ -1,5 +1,161 @@
-.locked-card {
-  background-color: #ccd1d69d; /* Light gray background */
-  color: #6c757d; /* Gray text color */
+/* Background gradient for the body */
+body {
+  background: rgb(145, 80, 214);
+  background: -webkit-linear-gradient(
+    to right,
+    rgb(145, 80, 214),
+    rgb(76, 137, 243)
+  );
+  background: linear-gradient(to right, rgb(145, 80, 214), rgb(76, 137, 243));
+}
+
+/* Navbar styles */
+.navbar-custom {
+  background-color: rgb(30, 35, 66); /* Semi-transparent background */
+  color: white; /* Ensure text color is white */
+}
+
+/* Custom navbar brand styles */
+.navbar-brand-custom {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* Margin for the logo */
+.navbar-brand-custom img {
+  margin-right: 0.5rem;
+}
+
+/* Page header styles */
+.page-header {
+  color: white; /* White text */
+  font-size: 2.5rem; /* Large text */
+  text-align: left; /* Align text to the left */
+  margin-bottom: 3rem; /* Add some space below the header */
+}
+
+/* Main card styles */
+.main-card {
+  border-radius: 1rem; /* Rounded corners */
+  text-align: center; /* Center text */
+  /* background-color: rgb(30, 35, 66); Semi-transparent background */
+  background-color: rgb(30, 35, 66); /* Semi-transparent background */
+  color: white; /* Ensure text color is white */
+  box-shadow: 0 0 10px rgba(56, 56, 56, 0.829); /* Glow effect */
+}
+
+/* Locked main-card styles */
+.main-card.locked-card {
+  cursor: not-allowed; /* No change in cursor on hover */
+  opacity: 0.5; /* Reduce opacity for locked card */
+  color: rgba(255, 255, 255, 0.685); /* Ensure text color is white */
   border-color: #dee2e6; /* Light gray border */
+}
+
+/* Hover effect for locked main cards */
+.main-card.locked-card:hover {
+  background-color: rgb(
+    30,
+    35,
+    66
+  ); /* No change in background color on hover */
+}
+
+/* Sign-in card styles */
+.signin-card {
+  padding: 2rem;
+  margin: 1rem;
+}
+
+/* Profile card styles */
+.profile-card {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  width: 100%;
+}
+
+/* Tile card styles */
+.tile-card {
+  width: 45%;
+  padding: 2rem;
+  margin: 0.5rem;
+  cursor: pointer;
+  white-space: nowrap;
+  /* text-wrap: none; */
+}
+
+/* Hover effect for tile cards */
+.tile-card:hover {
+  background-color: rgb(38, 45, 90); /* Darker background color on hover */
+}
+
+/* Responsive styles for tile cards */
+@media (max-width: 1000px) {
+  .tile-card {
+    width: 90%;
+    margin: 0.5rem;
+    text-wrap: none;
+  }
+}
+
+/* Course card styles */
+.course-card {
+  padding: 1rem;
+  cursor: pointer;
+}
+
+/* Hover effect for course cards */
+.course-card:hover {
+  background-color: rgb(38, 45, 90); /* Darker background color on hover */
+}
+
+/* Custom button styles */
+.custom-button {
+  background-color: #586adb; /* Button background color */
+  color: white; /* Button text color */
+  border: none; /* Remove default border */
+  border-radius: 0.5rem; /* Rounded corners */
+  padding: 0.5rem 1rem; /* Padding for the button */
+  font-size: 1rem; /* Font size */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background-color 0.3s ease; /* Smooth transition for background color */
+}
+
+.custom-button:hover {
+  background-color: #3d2aa9; /* Darker background color on hover */
+}
+
+/* User info table styles */
+.user-info-table {
+  width: 100%;
+  color: white; /* Ensure text color is white */
+  text-align: left;
+  font-size: larger;
+  /* border-radius: 1rem; Rounded corners */
+  background-color: rgb(49, 57, 109); /* Semi-transparent background */
+}
+
+/* Responsive styles for user-info */
+@media (max-width: 1000px) {
+  .user-info-table {
+    font-size: large;
+  }
+}
+
+.user-info-table td {
+  padding: 0.5rem; /* Add padding to table cells */
+}
+
+.user-info-table tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.135); /* Add a line after each row */
+}
+
+.user-info-table td:first-child {
+  font-weight: bold; /* Make the first column bold */
+  width: 50%;
+}
+
+.user-info-table tr:last-child {
+  border-bottom: none; /* Remove the border from the last row */
 }
