@@ -15,8 +15,7 @@ import {
 } from "firebase/firestore";
 import { app } from "../lib/firebase";
 import { useUser } from "../context/UserContext"; // Import the useUser hook
-
-// import { getAuth, onAuthStateChanged } from "firebase/auth";
+import CourseLayout from "../components/CourseLayout";
 
 const storage = getStorage(app);
 const db = getFirestore(app);
@@ -27,8 +26,6 @@ export default function Course1() {
   const [materials, setMaterials] = useState([]);
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
-  // const [userEmail, setUserEmail] = useState("");
-  // const auth = getAuth(app);
 
   // Fetch course materials
   const fetchMaterials = async () => {
@@ -70,20 +67,6 @@ export default function Course1() {
     fetchData();
   }, []);
 
-  // // Monitor authentication state
-  // useEffect(() => {
-  //   const unsubscribe = onAuthStateChanged(auth, (user) => {
-  //     if (user) {
-  //       setUserEmail(user.email);
-  //       console.log("User Email:", user.email); // Debug log
-  //     } else {
-  //       setUserEmail("");
-  //     }
-  //   });
-
-  //   return () => unsubscribe();
-  // }, [auth]);
-
   // Handle student submission
   const handleSubmission = async (materialId, file) => {
     if (!file) return alert("Please select a file");
@@ -111,13 +94,11 @@ export default function Course1() {
   };
 
   return (
-    <div>
+    <CourseLayout courseName="Course 1">
       <Head>
         <title>Course 1</title>
       </Head>
-      <h1>Course 1</h1>
-
-      {/* List Materials */}
+      {/* <h1>Course 1</h1> */}
       <h2>Materials</h2>
       {loading ? (
         <p>Loading...</p>
@@ -180,6 +161,6 @@ export default function Course1() {
       )}
 
       <button onClick={() => router.back()}>Back</button>
-    </div>
+    </CourseLayout>
   );
 }

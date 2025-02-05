@@ -13,6 +13,7 @@ body {
 .navbar-custom {
   background-color: rgb(30, 35, 66); /* Semi-transparent background */
   color: white; /* Ensure text color is white */
+  box-shadow: 0 0 10px rgba(56, 56, 56, 0.829); /* Glow effect */
 }
 
 /* Custom navbar brand styles */
@@ -97,6 +98,16 @@ body {
     margin: 0.5rem;
     text-wrap: none;
   }
+}
+
+/* Course navigation styles */
+.course-navbar-brand {
+  /* display: flex; */
+  /* align-items: center; */
+  /* cursor: pointer; */
+  font-size: 2rem;
+  /* margin: 1rem; */
+  padding: 1rem;
 }
 
 /* Course card styles */
