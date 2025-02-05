@@ -28,7 +28,7 @@ export default function MainNav() {
   return (
     <>
       <Navbar
-        expand="lg"
+        expand="sm"
         className="fixed-top navbar-dark navbar-custom"
         expanded={expanded}
         onToggle={() => setExpanded(!expanded)}
