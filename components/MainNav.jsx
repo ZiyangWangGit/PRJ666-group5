@@ -62,6 +62,10 @@ export default function MainNav() {
               <Link href="/courses" passHref legacyBehavior>
                 <Nav.Link onClick={handleSelect}>Courses</Nav.Link>
               </Link>
+              {/* Link to the Calendar page */}
+              <Link href="/calendar" passHref legacyBehavior>
+                <Nav.Link onClick={handleSelect}>Calendar</Nav.Link>
+              </Link>
               {/* Link to the Signin page */}
               <Link href="/signin" passHref legacyBehavior>
                 <Nav.Link onClick={handleSelect}>

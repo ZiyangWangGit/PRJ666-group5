@@ -71,7 +71,7 @@ export default function Profile() {
               </MDBCard>
               <MDBCard
                 className="main-card tile-card"
-                onClick={() => router.push("#")}
+                onClick={() => router.push("/calendar")}
               >
                 <MDBCardBody>
                   <h3>Calendar</h3>
