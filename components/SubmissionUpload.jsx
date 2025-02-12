@@ -2,13 +2,13 @@
 import { useState } from "react";
 import { Button, Card, Form } from "react-bootstrap";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { getFirestore, collection, addDoc } from "firebase/firestore";
+import { getFirestore, collection, addDoc, doc, updateDoc } from "firebase/firestore";
 import { app } from "../lib/firebase";
 
 const storage = getStorage(app);
 const db = getFirestore(app);
 
-export default function SubmissionUpload({ courseId, assignmentId }) {
+export default function SubmissionUpload({ courseId, assignmentId, user }) {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -22,12 +22,15 @@ export default function SubmissionUpload({ courseId, assignmentId }) {
       await uploadBytes(fileRef, file);
       const url = await getDownloadURL(fileRef);
 
-      await addDoc(collection(db, "submissions"), {
+      const submissionRef = await addDoc(collection(db, "submissions"), {
         courseId,
         assignmentId,
+        studentEmail: user.email,
         fileName: file.name,
         fileUrl: url,
         submittedAt: new Date(),
+        grade: null,
+        feedback: null,
       });
 
       setMessage("File uploaded successfully!");

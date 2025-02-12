@@ -1,3 +1,4 @@
+// ./components/CourseNav.jsx
 import { Navbar, Nav, Container } from "react-bootstrap";
 import Link from "next/link";
 import { useState } from "react";
