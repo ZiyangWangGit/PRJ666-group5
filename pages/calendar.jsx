@@ -1,68 +1,35 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useUser } from "@/context/UserContext";
 import Layout from "@/components/layout";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import PageHeader from "@/components/PageHeader";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  getDocs,
+  doc,
+} from "firebase/firestore";
+import { app } from "../lib/firebase";
 
 const courseColors = {
-  Math: "#e2a762", // Yellow
-  Science: "#3498db", // Blue
-  History: "#d33682", // Red
+  prj666: "#e2a762", // Yellow
+  dbs501: "#3498db", // Blue
   General: "#95a5a6", // Gray
-  Gym: "#6cba1b", // Green
 };
 
 const getEventColor = (course) => {
   return courseColors[course] || "#8e44ad"; // Default to purple if the course isn't listed
 };
 
-const sampleEvents = [
-  {
-    id: 1,
-    title: "Math Assignment Due",
-    date: "2025-02-01",
-    description: "Complete the math assignment.",
-    course: "Math",
-  },
-  {
-    id: 2,
-    title: "Science Project Presentation",
-    date: "2025-02-24",
-    description: "Present your science project.",
-    course: "Science",
-  },
-  {
-    id: 3,
-    title: "History Exam",
-    date: "2025-02-09",
-    description: "History exam covering chapters 1-5.",
-    course: "History",
-  },
-  {
-    id: 4,
-    title: "Parent-Teacher Meeting",
-    date: "2025-02-10",
-    description: "Meeting with parents and teachers.",
-    course: "General",
-  },
-  {
-    id: 5,
-    title: "School Sports Day",
-    date: "2025-02-20",
-    description: "Annual school sports day event.",
-    course: "Gym",
-  },
-].map((event) => ({
-  ...event,
-  backgroundColor: getEventColor(event.course),
-  borderColor: getEventColor(event.course),
-}));
-
 export default function CalendarPage() {
   const { user } = useUser();
-  const [events, setEvents] = useState(sampleEvents);
+  const db = getFirestore(app);
+  const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null); // Stores event details
   const [modalOpen, setModalOpen] = useState(false);
   const [addEventModalOpen, setAddEventModalOpen] = useState(false);
@@ -81,13 +48,34 @@ export default function CalendarPage() {
     course: "General",
   });
 
+  // Fetch events from Firestore
+  const fetchEvents = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, "events"));
+      const data = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        backgroundColor: getEventColor(doc.data().course),
+        borderColor: getEventColor(doc.data().course),
+      }));
+      setEvents(data);
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
   // Open the modal when an event is clicked
   const handleEventClick = (info) => {
     setSelectedEvent({
       id: info.event.id,
       title: info.event.title,
       description: info.event.extendedProps.description,
-      date: info.event.start.toDateString(),
+      date: info.event.start.toISOString().split("T")[0],
+      course: info.event.extendedProps.course,
     });
     setModalOpen(true);
   };
@@ -135,45 +123,76 @@ export default function CalendarPage() {
   };
 
   // Add a new event
-  const handleAddEvent = () => {
-    const newEventWithId = {
-      ...newEvent,
-      id: events.length + 1,
-      backgroundColor: getEventColor(newEvent.course),
-      borderColor: getEventColor(newEvent.course),
-    };
-    setEvents([...events, newEventWithId]);
-    closeAddEventModal();
+  const handleAddEvent = async () => {
+    if (!newEvent.date) {
+      alert("Please select a date for the event.");
+      return;
+    }
+
+    try {
+      const docRef = await addDoc(collection(db, "events"), {
+        title: newEvent.title,
+        date: newEvent.date,
+        description: newEvent.description,
+        course: newEvent.course,
+      });
+      const newEventWithId = {
+        ...newEvent,
+        id: docRef.id,
+        backgroundColor: getEventColor(newEvent.course),
+        borderColor: getEventColor(newEvent.course),
+      };
+      setEvents([...events, newEventWithId]);
+      closeAddEventModal();
+    } catch (error) {
+      console.error("Error adding event:", error);
+    }
   };
 
   // Update an event
-  const handleUpdateEvent = () => {
-    setEvents(
-      events.map((event) =>
-        event.id === editEvent.id
-          ? {
-              ...editEvent,
-              backgroundColor: getEventColor(editEvent.course),
-              borderColor: getEventColor(editEvent.course),
-            }
-          : event
-      )
-    );
-    closeEditEventModal();
+  const handleUpdateEvent = async () => {
+    try {
+      const eventRef = doc(db, "events", editEvent.id);
+      await updateDoc(eventRef, {
+        title: editEvent.title,
+        date: editEvent.date,
+        description: editEvent.description,
+        course: editEvent.course,
+      });
+      setEvents(
+        events.map((event) =>
+          event.id === editEvent.id
+            ? {
+                ...editEvent,
+                backgroundColor: getEventColor(editEvent.course),
+                borderColor: getEventColor(editEvent.course),
+              }
+            : event
+        )
+      );
+      closeEditEventModal();
+    } catch (error) {
+      console.error("Error updating event:", error);
+    }
   };
 
   // Remove an event
-  const handleRemoveEvent = () => {
+  const handleRemoveEvent = async () => {
     if (window.confirm("Are you sure you want to remove this event?")) {
-      setEvents(events.filter((event) => event.id !== selectedEvent.id));
-      closeModal();
+      try {
+        const eventRef = doc(db, "events", selectedEvent.id);
+        await deleteDoc(eventRef);
+        setEvents(events.filter((event) => event.id !== selectedEvent.id));
+        closeModal();
+      } catch (error) {
+        console.error("Error removing event:", error);
+      }
     }
   };
 
   return (
     <>
-      <PageHeader text="Calendar" />
-
+      <h1 className="page-header">Calendar</h1>
       {/* FullCalendar Component */}
       {user?.title === "professor" ? (
         <FullCalendar
@@ -304,11 +323,9 @@ export default function CalendarPage() {
                   setNewEvent({ ...newEvent, course: e.target.value })
                 }
               >
-                <option value="Math">Math</option>
-                <option value="Science">Science</option>
-                <option value="History">History</option>
+                <option value="prj666">prj666</option>
+                <option value="dbs501">dbs501</option>
                 <option value="General">General</option>
-                <option value="Gym">Gym</option>
               </select>
             </div>
             <button className="custom-button" onClick={handleAddEvent}>
@@ -372,11 +389,9 @@ export default function CalendarPage() {
                   setEditEvent({ ...editEvent, course: e.target.value })
                 }
               >
-                <option value="Math">Math</option>
-                <option value="Science">Science</option>
-                <option value="History">History</option>
+                <option value="prj666">prj666</option>
+                <option value="dbs501">dbs501</option>
                 <option value="General">General</option>
-                <option value="Gym">Gym</option>
               </select>
             </div>
             <button className="btn custom-button" onClick={handleUpdateEvent}>
