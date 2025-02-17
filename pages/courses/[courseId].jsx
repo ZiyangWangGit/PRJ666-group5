@@ -208,7 +208,7 @@ export default function CoursePage() {
   }
 
   return (
-    <CourseLayout courseName={course?.title}>
+    <CourseLayout courseId={courseId}>
       <Head>
         <title>{course?.title}</title>
       </Head>

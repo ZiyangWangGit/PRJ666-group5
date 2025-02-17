@@ -58,7 +58,7 @@ const CourseLayout = ({ courseId, children }) => {
 
   return (
     <div>
-      <CourseNavbar courseId={courseId} />
+      <CourseNavbar courseName={courseId} />
       <div className="course-content">
         {user?.title === "professor" && (
           <button
