@@ -1,44 +1,48 @@
-// ./components/CourseLayout.jsx
-import CourseNav from "./CourseNavbar";
+import CourseNavbar from "./CourseNavbar";
 import { useUser } from "../context/UserContext";
-import { getFirestore, doc, updateDoc, getDoc, setDoc } from "firebase/firestore";
+import { getFirestore, doc, updateDoc, getDoc } from "firebase/firestore";
 import { app } from "../lib/firebase";
 import { useState, useEffect } from "react";
 
 const db = getFirestore(app);
 
-const CourseLayout = ({ courseName, children }) => {
+const CourseLayout = ({ courseId, children }) => {
   const { user } = useUser();
   const [courseLocked, setCourseLocked] = useState(false);
+  const [courseExists, setCourseExists] = useState(true);
 
-  // Fetch course lock status on page load
   useEffect(() => {
     const fetchCourseLockStatus = async () => {
+      if (!courseId) return;
+
       try {
-        const courseRef = doc(db, "courses", courseName);
+        const courseRef = doc(db, "courses", courseId);
         const courseDoc = await getDoc(courseRef);
+
         if (courseDoc.exists()) {
           setCourseLocked(courseDoc.data().locked || false);
         } else {
-          // Create the course document if it doesn't exist
-          await setDoc(courseRef, { locked: false });
-          setCourseLocked(false);
+          console.warn(`Course with ID "${courseId}" not found.`);
+          setCourseExists(false);
         }
       } catch (error) {
         console.error("Error fetching course lock status:", error);
+        setCourseExists(false);
       }
     };
 
     fetchCourseLockStatus();
-  }, [courseName]);
+  }, [courseId]);
 
-  // Handle locking/unlocking course by professor
   const handleLockCourse = async (locked) => {
     try {
-      const courseRef = doc(db, "courses", courseName);
-      await updateDoc(courseRef, {
-        locked,
-      });
+      if (!courseExists) {
+        alert("Error: Cannot lock/unlock a non-existent course.");
+        return;
+      }
+
+      const courseRef = doc(db, "courses", courseId);
+      await updateDoc(courseRef, { locked });
 
       setCourseLocked(locked);
       alert(`Course ${locked ? "locked" : "unlocked"} successfully!`);
@@ -48,11 +52,14 @@ const CourseLayout = ({ courseName, children }) => {
     }
   };
 
+  if (!courseExists) {
+    return <p style={{ color: "red" }}>Error: Course not found.</p>;
+  }
+
   return (
     <div>
-      <CourseNav courseName={courseName} />
+      <CourseNavbar courseId={courseId} />
       <div className="course-content">
-        {/* Lock/Unlock Course Button for Professors */}
         {user?.title === "professor" && (
           <button
             onClick={() => handleLockCourse(!courseLocked)}

@@ -4,26 +4,60 @@ import { useState, useEffect } from "react";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, setDoc } from "firebase/firestore";
-import { app } from "../lib/firebase";
-import { useUser } from "../context/UserContext";
-import CourseLayout from "../components/CourseLayout";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  doc,
+  updateDoc,
+  query,
+  where,
+  getDoc,
+} from "firebase/firestore";
+import { app } from "../../lib/firebase";
+import { useUser } from "../../context/UserContext";
+import CourseLayout from "../../components/CourseLayout";
 
 const storage = getStorage(app);
 const db = getFirestore(app);
 
-export default function CoursePage({ courseName }) {
+export default function CoursePage() {
   const router = useRouter();
+  const { courseId } = router.query;
   const { user } = useUser();
+  const [course, setCourse] = useState(null);
   const [materials, setMaterials] = useState([]);
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [newAssignment, setNewAssignment] = useState({ name: "", file: null, visible: true });
+  const [newAssignment, setNewAssignment] = useState({
+    name: "",
+    file: null,
+    visible: true,
+  });
+
+  // Fetch course details
+  const fetchCourse = async () => {
+    try {
+      const courseDoc = await getDoc(doc(db, "courses", courseId));
+      if (courseDoc.exists()) {
+        setCourse({ id: courseDoc.id, ...courseDoc.data() });
+      } else {
+        console.error("Course not found");
+      }
+    } catch (error) {
+      console.error("Error fetching course:", error);
+    }
+  };
 
   // Fetch course materials
   const fetchMaterials = async () => {
     try {
-      const querySnapshot = await getDocs(collection(db, "course_materials"));
+      const q = query(
+        collection(db, "course_materials"),
+        where("courseId", "==", courseId)
+      );
+      const querySnapshot = await getDocs(q);
       const data = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
@@ -38,7 +72,11 @@ export default function CoursePage({ courseName }) {
   // Fetch submissions
   const fetchSubmissions = async () => {
     try {
-      const querySnapshot = await getDocs(collection(db, "submissions"));
+      const q = query(
+        collection(db, "submissions"),
+        where("courseId", "==", courseId)
+      );
+      const querySnapshot = await getDocs(q);
       const data = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
@@ -52,28 +90,48 @@ export default function CoursePage({ courseName }) {
 
   // Fetch data on page load
   useEffect(() => {
-    const fetchData = async () => {
-      await fetchMaterials();
-      await fetchSubmissions();
-      setLoading(false);
-    };
-    fetchData();
-  }, []);
+    if (courseId) {
+      const fetchData = async () => {
+        await fetchCourse();
+        await fetchMaterials();
+        await fetchSubmissions();
+        setLoading(false);
+      };
+      fetchData();
+    }
+  }, [courseId]);
 
   // Handle student submission
   const handleSubmission = async (materialId, file) => {
     if (!file) return alert("Please select a file");
 
     try {
+      // Ensure course exists before proceeding (only for validation purposes)
+      const courseRef = doc(db, "courses", courseId);
+      const courseSnap = await getDoc(courseRef);
+
+      if (!courseSnap.exists()) {
+        console.error("Course does not exist, submission aborted.");
+        return alert("Error: Course not found.");
+      }
+
       // Ensure the file is valid
-      if (!file.type.startsWith("application/pdf") && !file.type.startsWith("application/msword") && !file.type.startsWith("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
+      if (
+        !file.type.startsWith("application/pdf") &&
+        !file.type.startsWith("application/msword") &&
+        !file.type.startsWith(
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        )
+      ) {
         return alert("Only PDF and Word files are allowed.");
       }
 
+      // Upload file to storage
       const fileRef = ref(storage, `submissions/${materialId}/${file.name}`);
       await uploadBytes(fileRef, file);
       const url = await getDownloadURL(fileRef);
 
+      // Add submission to Firestore under the "submissions" collection
       await addDoc(collection(db, "submissions"), {
         materialId,
         studentEmail: user.email,
@@ -82,6 +140,7 @@ export default function CoursePage({ courseName }) {
         submittedAt: new Date(),
         grade: null,
         feedback: null,
+        courseId, // Linking to existing course
       });
 
       // Refresh submissions after upload
@@ -95,7 +154,8 @@ export default function CoursePage({ courseName }) {
 
   // Handle grading by professor
   const handleGradeSubmission = async (submissionId, grade, feedback) => {
-    if (!grade || !feedback) return alert("Please provide both grade and feedback");
+    if (!grade || !feedback)
+      return alert("Please provide both grade and feedback");
 
     try {
       const submissionRef = doc(db, "submissions", submissionId);
@@ -115,7 +175,8 @@ export default function CoursePage({ courseName }) {
 
   // Handle adding new assignment by professor
   const handleAddAssignment = async () => {
-    if (!newAssignment.name || !newAssignment.file) return alert("Please fill in all fields");
+    if (!newAssignment.name || !newAssignment.file)
+      return alert("Please fill in all fields");
 
     try {
       // Upload the assignment file
@@ -128,6 +189,7 @@ export default function CoursePage({ courseName }) {
         name: newAssignment.name,
         url,
         visible: newAssignment.visible,
+        courseId, // Assign courseId to the assignment
       });
 
       // Refresh materials after adding
@@ -146,9 +208,9 @@ export default function CoursePage({ courseName }) {
   }
 
   return (
-    <CourseLayout courseName={courseName}>
+    <CourseLayout courseName={course?.title}>
       <Head>
-        <title>{courseName}</title>
+        <title>{course?.title}</title>
       </Head>
       <h2>Materials</h2>
       {loading ? (
@@ -164,7 +226,9 @@ export default function CoursePage({ courseName }) {
                   type="text"
                   placeholder="Assignment Name"
                   value={newAssignment.name}
-                  onChange={(e) => setNewAssignment({ ...newAssignment, name: e.target.value })}
+                  onChange={(e) =>
+                    setNewAssignment({ ...newAssignment, name: e.target.value })
+                  }
                 />
                 <input
                   type="file"
@@ -179,7 +243,12 @@ export default function CoursePage({ courseName }) {
                   <input
                     type="checkbox"
                     checked={newAssignment.visible}
-                    onChange={(e) => setNewAssignment({ ...newAssignment, visible: e.target.checked })}
+                    onChange={(e) =>
+                      setNewAssignment({
+                        ...newAssignment,
+                        visible: e.target.checked,
+                      })
+                    }
                   />
                   Visible to Students
                 </label>
@@ -195,7 +264,11 @@ export default function CoursePage({ courseName }) {
                 <Card.Title>{material.name}</Card.Title>
                 {material.visible || user?.title === "professor" ? (
                   <>
-                    <a href={material.url} target="_blank" rel="noopener noreferrer">
+                    <a
+                      href={material.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       View Material
                     </a>
                     <br />
@@ -217,13 +290,20 @@ export default function CoursePage({ courseName }) {
                     )}
                     {/* Display Submissions */}
                     {submissions
-                      .filter((submission) => submission.materialId === material.id)
+                      .filter(
+                        (submission) => submission.materialId === material.id
+                      )
                       .map((submission) => (
                         <div key={submission.id} className="mt-3">
                           <p>
-                            <strong>Your Submission:</strong> {submission.fileName}
+                            <strong>Your Submission:</strong>{" "}
+                            {submission.fileName}
                           </p>
-                          <a href={submission.fileUrl} target="_blank" rel="noopener noreferrer">
+                          <a
+                            href={submission.fileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
                             Download Submission
                           </a>
                           {submission.grade && (
@@ -243,11 +323,15 @@ export default function CoursePage({ courseName }) {
                               <input
                                 type="text"
                                 placeholder="Grade"
-                                onChange={(e) => (submission.grade = e.target.value)}
+                                onChange={(e) =>
+                                  (submission.grade = e.target.value)
+                                }
                               />
                               <textarea
                                 placeholder="Feedback"
-                                onChange={(e) => (submission.feedback = e.target.value)}
+                                onChange={(e) =>
+                                  (submission.feedback = e.target.value)
+                                }
                               />
                               <button
                                 onClick={() =>
