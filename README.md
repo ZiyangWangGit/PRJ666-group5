@@ -1,6 +1,5 @@
-<<<<<<< HEAD
+# SAUCE Learning Management System (LMS)
 
+### Overview
 
-=======
-# PRJ666
->>>>>>> c9313ecd375f92ad19f869b0b8c5d7c23eb0ac2e
+This Learning Management System (LMS) is designed to facilitate online course management for students and educators. It allows teachers to create and manage courses, upload learning materials, grade assignments, and interact with students. Students can enroll in courses, submit assignments, track their grades, and participate in discussions.
