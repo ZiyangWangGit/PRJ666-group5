@@ -63,6 +63,15 @@ body {
   ); /* No change in background color on hover */
 }
 
+/* Main card styles */
+.secondary-card {
+  /* border-radius: 0.5rem; Rounded corners */
+  text-align: left; /* Center text */
+  background-color: #ffffffae; /* Semi-transparent background */
+  /* color: white; Ensure text color is white */
+  box-shadow: 0 0 10px rgba(109, 109, 109, 0.829); /* Glow effect */
+}
+
 /* Sign-in card styles */
 .signin-card {
   padding: 2rem;
@@ -131,6 +140,52 @@ body {
 
 .custom-button:hover {
   background-color: #3d2aa9; /* Darker background color on hover */
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (max-width: 768px) {
+  .buttonContainer {
+    justify-content: center;
+    margin-top: 1rem;
+  }
+}
+
+.assignmentForm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+
+.assignmentForm input[type="text"],
+.assignmentForm input[type="file"],
+.assignmentForm label {
+  flex: 1;
+}
+
+.assignmentForm button {
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .assignmentForm {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .assignmentForm button {
+    width: 100%;
+  }
+}
+
+.highlight {
+  background-color: #f0f0f0;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
 }
 
 /* User info table styles */

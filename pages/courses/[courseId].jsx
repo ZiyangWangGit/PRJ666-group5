@@ -219,141 +219,154 @@ export default function CoursePage() {
         <>
           {/* Professor Section: Add Assignment */}
           {user?.title === "professor" && (
-            <Card className="my-3">
+            <Card className="secondary-card my-3">
               <Card.Body>
                 <Card.Title>Add New Assignment</Card.Title>
-                <input
-                  type="text"
-                  placeholder="Assignment Name"
-                  value={newAssignment.name}
-                  onChange={(e) =>
-                    setNewAssignment({ ...newAssignment, name: e.target.value })
-                  }
-                />
-                <input
-                  type="file"
-                  onChange={(e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                      setNewAssignment({ ...newAssignment, file });
-                    }
-                  }}
-                />
-                <label>
+                <div className="assignmentForm">
                   <input
-                    type="checkbox"
-                    checked={newAssignment.visible}
+                    type="text"
+                    placeholder="Assignment Name"
+                    value={newAssignment.name}
                     onChange={(e) =>
                       setNewAssignment({
                         ...newAssignment,
-                        visible: e.target.checked,
+                        name: e.target.value,
                       })
                     }
                   />
-                  Visible to Students
-                </label>
-                <Button onClick={handleAddAssignment}>Add Assignment</Button>
+                  <input
+                    type="file"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file) {
+                        setNewAssignment({ ...newAssignment, file });
+                      }
+                    }}
+                  />
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={newAssignment.visible}
+                      onChange={(e) =>
+                        setNewAssignment({
+                          ...newAssignment,
+                          visible: e.target.checked,
+                        })
+                      }
+                    />
+                    Visible to Students
+                  </label>
+                  <Button
+                    className="custom-button"
+                    onClick={handleAddAssignment}
+                  >
+                    Add Assignment
+                  </Button>
+                </div>
               </Card.Body>
             </Card>
           )}
 
           {/* Display Materials */}
           {materials.map((material) => (
-            <Card key={material.id} className="my-2">
+            <Card key={material.id} className="secondary-card my-2">
               <Card.Body>
-                <Card.Title>{material.name}</Card.Title>
-                {material.visible || user?.title === "professor" ? (
-                  <>
-                    <a
-                      href={material.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      View Material
-                    </a>
-                    <br />
-                    <br />
-                    {/* Student Submission Section */}
-                    {user?.title === "student" && (
-                      <>
-                        <h5>Submit Your Answer</h5>
-                        <input
-                          type="file"
-                          onChange={(e) => {
-                            const file = e.target.files[0];
-                            if (file) {
-                              handleSubmission(material.id, file);
-                            }
-                          }}
-                        />
-                      </>
-                    )}
-                    {/* Display Submissions */}
-                    {submissions
-                      .filter(
-                        (submission) => submission.materialId === material.id
-                      )
-                      .map((submission) => (
-                        <div key={submission.id} className="mt-3">
-                          <p>
-                            <strong>Your Submission:</strong>{" "}
-                            {submission.fileName}
-                          </p>
-                          <a
-                            href={submission.fileUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            Download Submission
-                          </a>
-                          {submission.grade && (
+                <div className="materialCardBody">
+                  <Card.Title>{material.name}</Card.Title>
+                  {material.visible || user?.title === "professor" ? (
+                    <>
+                      <a
+                        href={material.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        View Material
+                      </a>
+                      <br />
+                      <br />
+                      {/* Student Submission Section */}
+                      {user?.title === "student" && (
+                        <>
+                          <h5>Submit Your Answer</h5>
+                          <input
+                            type="file"
+                            onChange={(e) => {
+                              const file = e.target.files[0];
+                              if (file) {
+                                handleSubmission(material.id, file);
+                              }
+                            }}
+                          />
+                        </>
+                      )}
+                      {/* Display Submissions */}
+                      {submissions
+                        .filter(
+                          (submission) => submission.materialId === material.id
+                        )
+                        .map((submission) => (
+                          <div key={submission.id} className="mt-3">
                             <p>
-                              <strong>Grade:</strong> {submission.grade}
+                              <strong>Your Submission:</strong>{" "}
+                              {submission.fileName}
                             </p>
-                          )}
-                          {submission.feedback && (
-                            <p>
-                              <strong>Feedback:</strong> {submission.feedback}
-                            </p>
-                          )}
-                          {/* Professor Grading Section */}
-                          {user?.title === "professor" && (
-                            <div className="mt-3">
-                              <h6>Grade Submission</h6>
-                              <input
-                                type="text"
-                                placeholder="Grade"
-                                onChange={(e) =>
-                                  (submission.grade = e.target.value)
-                                }
-                              />
-                              <textarea
-                                placeholder="Feedback"
-                                onChange={(e) =>
-                                  (submission.feedback = e.target.value)
-                                }
-                              />
-                              <button
-                                onClick={() =>
-                                  handleGradeSubmission(
-                                    submission.id,
-                                    submission.grade,
-                                    submission.feedback
-                                  )
-                                }
-                              >
-                                Submit Grade
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                  </>
-                ) : (
-                  <p>
-                    <i>Hidden from students</i>
-                  </p>
-                )}
+                            <a
+                              href={submission.fileUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              Download Submission
+                            </a>
+                            {submission.grade && (
+                              <p className="highlight">
+                                <strong>Grade:</strong> {submission.grade}
+                              </p>
+                            )}
+                            {submission.feedback && (
+                              <p className="highlight">
+                                <strong>Feedback:</strong> {submission.feedback}
+                              </p>
+                            )}
+                            {/* Professor Grading Section */}
+                            {user?.title === "professor" && (
+                              <div className="gradingSection">
+                                <h6>Grade Submission</h6>
+                                <input
+                                  type="text"
+                                  placeholder="Grade"
+                                  onChange={(e) =>
+                                    (submission.grade = e.target.value)
+                                  }
+                                />
+                                <textarea
+                                  placeholder="Feedback"
+                                  onChange={(e) =>
+                                    (submission.feedback = e.target.value)
+                                  }
+                                />
+                                <button
+                                  className="custom-button"
+                                  onClick={() =>
+                                    handleGradeSubmission(
+                                      submission.id,
+                                      submission.grade,
+                                      submission.feedback
+                                    )
+                                  }
+                                >
+                                  Submit Grade
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                    </>
+                  ) : (
+                    <p>
+                      <i>Hidden from students</i>
+                    </p>
+                  )}
+                </div>
               </Card.Body>
             </Card>
           ))}

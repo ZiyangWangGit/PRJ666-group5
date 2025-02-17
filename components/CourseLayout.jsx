@@ -62,6 +62,7 @@ const CourseLayout = ({ courseId, children }) => {
       <div className="course-content">
         {user?.title === "professor" && (
           <button
+            className="custom-button"
             onClick={() => handleLockCourse(!courseLocked)}
             style={{ margin: "10px" }}
           >

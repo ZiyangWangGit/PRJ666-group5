@@ -18,7 +18,7 @@ export default function Profile() {
   const router = useRouter();
 
   return (
-    <MDBContainer fluid style={{ height: "50vh" }}>
+    <MDBContainer fluid className="main-content" style={{ height: "50vh" }}>
       <Head>
         <title>Profile</title>
       </Head>
@@ -77,8 +77,11 @@ export default function Profile() {
                   <h3>Calendar</h3>
                 </MDBCardBody>
               </MDBCard>
-              {user.title === "student" && ( 
-                <MDBCard className="main-card tile-card" onClick={() => router.push("/timetable")}> 
+              {user.title === "student" && (
+                <MDBCard
+                  className="main-card tile-card"
+                  onClick={() => router.push("/timetable")}
+                >
                   <MDBCardBody>
                     <h3>Timetable</h3>
                   </MDBCardBody>
