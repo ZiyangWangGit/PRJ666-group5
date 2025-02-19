@@ -26,16 +26,24 @@ export default function CourseNavbar({ courseName }) {
         <Navbar.Toggle aria-controls="course-navbar-nav" />
         <Navbar.Collapse id="course-navbar-nav">
           <Nav className="me-auto">
-            <Link href="#announcements" passHref>
+            <Link
+              href="#announcements"
+              passHref
+              style={{ textDecoration: "none" }}
+            >
               <Nav.Link onClick={handleSelect}>Announcements</Nav.Link>
             </Link>
-            <Link href="#grades" passHref>
+            <Link href="#grades" passHref style={{ textDecoration: "none" }}>
               <Nav.Link onClick={handleSelect}>Grades</Nav.Link>
             </Link>
-            <Link href="#materials" passHref>
+            <Link href="#materials" passHref style={{ textDecoration: "none" }}>
               <Nav.Link onClick={handleSelect}>Materials</Nav.Link>
             </Link>
-            <Link href="#assignments" passHref>
+            <Link
+              href="#assignments"
+              passHref
+              style={{ textDecoration: "none" }}
+            >
               <Nav.Link onClick={handleSelect}>Assignments</Nav.Link>
             </Link>
           </Nav>

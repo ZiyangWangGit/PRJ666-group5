@@ -18,6 +18,8 @@ import {
 import { app } from "../../lib/firebase";
 import { useUser } from "../../context/UserContext";
 import CourseLayout from "../../components/CourseLayout";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDownload } from "@fortawesome/free-solid-svg-icons";
 
 const storage = getStorage(app);
 const db = getFirestore(app);
@@ -212,7 +214,7 @@ export default function CoursePage() {
       <Head>
         <title>{course?.title}</title>
       </Head>
-      <h2>Materials</h2>
+      <h2 className="materal-header">Materials</h2>
       {loading ? (
         <p>Loading...</p>
       ) : (
@@ -254,7 +256,7 @@ export default function CoursePage() {
                         })
                       }
                     />
-                    Visible to Students
+                    &nbsp; Visible to Students
                   </label>
                   <Button
                     className="custom-button"
@@ -279,6 +281,7 @@ export default function CoursePage() {
                         href={material.url}
                         target="_blank"
                         rel="noopener noreferrer"
+                        className="viewMaterialLink"
                       >
                         View Material
                       </a>
@@ -305,60 +308,66 @@ export default function CoursePage() {
                           (submission) => submission.materialId === material.id
                         )
                         .map((submission) => (
-                          <div key={submission.id} className="mt-3">
-                            <p>
-                              <strong>Your Submission:</strong>{" "}
-                              {submission.fileName}
-                            </p>
-                            <a
-                              href={submission.fileUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              Download Submission
-                            </a>
-                            {submission.grade && (
-                              <p className="highlight">
-                                <strong>Grade:</strong> {submission.grade}
-                              </p>
-                            )}
-                            {submission.feedback && (
-                              <p className="highlight">
-                                <strong>Feedback:</strong> {submission.feedback}
-                              </p>
-                            )}
-                            {/* Professor Grading Section */}
-                            {user?.title === "professor" && (
-                              <div className="gradingSection">
-                                <h6>Grade Submission</h6>
-                                <input
-                                  type="text"
-                                  placeholder="Grade"
-                                  onChange={(e) =>
-                                    (submission.grade = e.target.value)
-                                  }
-                                />
-                                <textarea
-                                  placeholder="Feedback"
-                                  onChange={(e) =>
-                                    (submission.feedback = e.target.value)
-                                  }
-                                />
-                                <button
-                                  className="custom-button"
-                                  onClick={() =>
-                                    handleGradeSubmission(
-                                      submission.id,
-                                      submission.grade,
-                                      submission.feedback
-                                    )
-                                  }
+                          <Card key={submission.id} className="submissionCard">
+                            <Card.Body>
+                              <p>
+                                <strong>Submission:</strong>{" "}
+                                {submission.fileName}
+                                <a
+                                  href={submission.fileUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="downloadLink"
                                 >
-                                  Submit Grade
-                                </button>
-                              </div>
-                            )}
-                          </div>
+                                  <FontAwesomeIcon icon={faDownload} />
+                                </a>
+                              </p>
+                              {submission.grade && (
+                                <p className="highlight">
+                                  <strong>Grade:</strong> {submission.grade}
+                                </p>
+                              )}
+                              {submission.feedback && (
+                                <p className="highlight">
+                                  <strong>Feedback:</strong>{" "}
+                                  {submission.feedback}
+                                </p>
+                              )}
+                              {/* Professor Grading Section */}
+                              {user?.title === "professor" && (
+                                <div className="gradingSection">
+                                  <h6>Grade Submission</h6>
+                                  <input
+                                    type="text"
+                                    placeholder="Grade"
+                                    className="gradeInput"
+                                    onChange={(e) =>
+                                      (submission.grade = e.target.value)
+                                    }
+                                  />
+                                  <textarea
+                                    placeholder="Feedback"
+                                    className="feedbackInput"
+                                    onChange={(e) =>
+                                      (submission.feedback = e.target.value)
+                                    }
+                                  />
+                                  <button
+                                    className="custom-button"
+                                    onClick={() =>
+                                      handleGradeSubmission(
+                                        submission.id,
+                                        submission.grade,
+                                        submission.feedback
+                                      )
+                                    }
+                                  >
+                                    Submit Grade
+                                  </button>
+                                </div>
+                              )}
+                            </Card.Body>
+                          </Card>
                         ))}
                     </>
                   ) : (
@@ -372,7 +381,9 @@ export default function CoursePage() {
           ))}
         </>
       )}
-      <button onClick={() => router.back()}>Back</button>
+      <button className="secondary-button" onClick={() => router.back()}>
+        Back
+      </button>
     </CourseLayout>
   );
 }

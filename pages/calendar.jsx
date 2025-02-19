@@ -19,7 +19,7 @@ import { app } from "../lib/firebase";
 const courseColors = {
   prj666: "#e2a762", // Yellow
   dbs501: "#3498db", // Blue
-  General: "#95a5a6", // Gray
+  General: "#71bc78", //
 };
 
 const getEventColor = (course) => {
@@ -220,9 +220,9 @@ export default function CalendarPage() {
           plugins={[dayGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
           headerToolbar={{
-            left: "",
+            left: "today",
             center: "title",
-            right: "prev,next today",
+            right: "prev,next",
           }}
           nowIndicator={true}
           editable={true}

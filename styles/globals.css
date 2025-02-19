@@ -17,6 +17,13 @@ body {
   box-shadow: 0 0 10px rgba(56, 56, 56, 0.829); /* Glow effect */
 }
 
+/* Navbar styles */
+.course-navbar {
+  background-color: rgba(30, 35, 66, 0.849); /* Semi-transparent background */
+  color: white; /* Ensure text color is white */
+  box-shadow: 0 0 10px rgba(56, 56, 56, 0.829); /* Glow effect */
+}
+
 /* Custom navbar brand styles */
 .navbar-brand-custom {
   display: flex;
@@ -35,6 +42,15 @@ body {
   font-size: 2.5rem; /* Large text */
   text-align: left; /* Align text to the left */
   margin-bottom: 3rem; /* Add some space below the header */
+}
+
+/* Page header styles */
+.materal-header {
+  color: white; /* White text */
+  font-size: 2.5rem; /* Large text */
+  text-align: left; /* Align text to the left */
+  margin-bottom: 1rem; /* Add some space below the header */
+  margin-top: 1rem; /* Add some space above the header */
 }
 
 /* Main card styles */
@@ -138,8 +154,39 @@ body {
   transition: background-color 0.3s ease; /* Smooth transition for background color */
 }
 
+/* Custom button styles  */
+.secondary-button {
+  background-color: #dab8ffd7; /* Set the background color of the buttons */
+  /* color: #3d2aa9; Set the text color of the buttons */
+  /* color: white; /* Button text color */
+  border: white; /*Remove default border*/
+  /* border-color: #586adb; Set the border color of the buttons */
+  border-radius: 0.5rem; /* Rounded corners */
+  padding: 0.5rem 1rem; /* Padding for the button */
+  font-size: 1rem; /* Font size */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background-color 0.3s ease; /* Smooth transition for background color */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.secondary-button:hover {
+  background-color: #586adb; /* Set the background color of the buttons */
+  border-color: #586adb; /* Set the border color of the buttons */
+  color: #3d2aa9; /* Set the text color of the buttons */
+}
+
+.secondary-button:disabled {
+  background-color: #dab8ff75; /* Set the background color of the buttons */
+  border-color: #586adb; /* Set the border color of the buttons */
+  color: #3d2aa9; /* Set the text color of the buttons */
+}
+
 .custom-button:hover {
   background-color: #3d2aa9; /* Darker background color on hover */
+}
+
+.back-button:hover {
+  background-color: #2a3da9e7; /* Darker background color on hover */
 }
 
 .buttonContainer {
@@ -182,10 +229,76 @@ body {
   }
 }
 
+.materialCardBody {
+  display: flex;
+  flex-direction: column;
+}
+
+.viewMaterialLink {
+  color: #1a73e8; /* Darker blue color */
+  text-decoration: none;
+}
+
+.viewMaterialLink:hover {
+  text-decoration: underline;
+}
+
+.submissionCard {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 0.25rem;
+  background-color: #ffffff6b;
+}
+
+.downloadLink {
+  color: #1a73e8; /* Darker blue color */
+  text-decoration: none;
+  margin-left: 0.5rem;
+  /* display: inline-block; */
+}
+
+.downloadLink:hover {
+  text-decoration: underline;
+}
+
 .highlight {
   background-color: #f0f0f0;
   padding: 0.5rem;
   border-radius: 0.25rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.gradingSection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+
+.gradeInput {
+  flex: 1;
+  max-width: 150px; /* Limit the width of the grade input */
+}
+
+.feedbackInput {
+  flex: 2; /* Make the feedback input take up more space */
+}
+
+@media (max-width: 768px) {
+  .gradingSection {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .assignmentForm button {
+    width: 100%;
+  }
+
+  .gradeInput {
+    flex: 2;
+    width: 100%;
+  }
 }
 
 /* User info table styles */
@@ -194,7 +307,7 @@ body {
   color: white; /* Ensure text color is white */
   text-align: left;
   font-size: larger;
-  /* border-radius: 1rem; Rounded corners */
+  border-radius: 1rem; /*Rounded corners*/
   background-color: rgb(49, 57, 109); /* Semi-transparent background */
 }
 
