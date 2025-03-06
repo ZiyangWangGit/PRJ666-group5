@@ -1,43 +1,70 @@
-import { useState } from 'react';
-import { db } from '../lib/firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { useUser } from '../context/UserContext';
+// components/AnnouncementForm.jsx
+import { useState, useCallback } from "react";
+import { Button, Card, Form } from "react-bootstrap";
+import { getFirestore, collection, addDoc } from "firebase/firestore";
+import { useUser } from "../context/UserContext";
+import { app } from "../lib/firebase";
+
+const db = getFirestore(app);
 
 export default function AnnouncementForm({ courseId }) {
-  const [announcement, setAnnouncement] = useState('');
-  const [file, setFile] = useState(null);
-  const { user } = useUser();
+    const { user } = useUser();
+    const [announcement, setAnnouncement] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [message, setMessage] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!announcement.trim()) return;
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!announcement.trim()) {
+            alert("Please enter an announcement");
+            return;
+        }
 
-    const announcementData = {
-      content: announcement,
-      postedBy: user.email,
-      courseId: courseId,
-      postedAt: serverTimestamp(),
+        if (user?.title !== "professor") {
+            setMessage("Only professors can post announcements.");
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const newAnnouncement = {
+                courseId,
+                content: announcement,
+                postedAt: new Date().toISOString(),
+                postedBy: user.email,
+            };
+            await addDoc(collection(db, "announcements"), newAnnouncement);
+            setAnnouncement("");
+            setMessage("Announcement posted successfully!");
+        } catch (error) {
+            console.error("Error posting announcement:", error);
+            setMessage("Failed to post announcement.");
+        } finally {
+            setLoading(false);
+        }
     };
 
-    if (file) {
-      // Handle file upload here, attach file URL to announcementData if needed
-    }
-
-    await addDoc(collection(db, "announcements"), announcementData);
-
-    setAnnouncement('');
-    setFile(null); // Clear the file input if used
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <textarea
-        value={announcement}
-        onChange={(e) => setAnnouncement(e.target.value)}
-        placeholder="Type your announcement here..."
-      />
-      <input type="file" onChange={(e) => setFile(e.target.files[0])} />
-      <button type="submit">Post Announcement</button>
-    </form>
-  );
+    return (
+        <Card className="my-3 secondary-card">
+            <Card.Body>
+                <Card.Title>Post New Announcement</Card.Title>
+                <Form onSubmit={handleSubmit}>
+                    <Form.Group className="mb-3">
+                        <Form.Control
+                            as="textarea"
+                            rows={3}
+                            value={announcement}
+                            onChange={(e) => setAnnouncement(e.target.value)}
+                            placeholder="Enter your announcement here"
+                            disabled={loading}
+                        />
+                    </Form.Group>
+                    <Button type="submit" disabled={loading}>
+                        {loading ? "Posting..." : "Post Announcement"}
+                    </Button>
+                    {message && <div className={message.includes("Failed") ? "text-danger" : "text-success"}>{message}</div>}
+                </Form>
+            </Card.Body>
+        </Card>
+    );
 }

@@ -15,12 +15,12 @@ import {
   where,
   getDoc,
 } from "firebase/firestore";
-import { app } from "../../lib/firebase";
-import { useUser } from "../../context/UserContext";
-import CourseLayout from "../../components/CourseLayout";
+import { app } from "../../../lib/firebase";
+import { useUser } from "../../../context/UserContext";
+import CourseLayout from "../../../components/CourseLayout";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
-import HideToggleIcon from "../../components/HideToggleIcon"; // Import the HideToggleIcon component
+import HideToggleIcon from "../../../components/HideToggleIcon"; // Import the HideToggleIcon component
 
 const storage = getStorage(app);
 const db = getFirestore(app);
@@ -284,7 +284,6 @@ export default function CoursePage() {
             <Card key={material.id} className="secondary-card my-2">
               <Card.Body>
                 <div className="materialCardBody">
-                  {/* <Card.Title>{material.name}</Card.Title> */}
                   <div className="cardHeader">
                     <Card.Title>{material.name}</Card.Title>
                     {user?.title === "professor" && (
@@ -296,17 +295,6 @@ export default function CoursePage() {
                       />
                     )}
                   </div>
-                  {/* <Card.Title>
-                    {material.name}
-                    {user?.title === "professor" && (
-                      <HideToggleIcon
-                        id={material.id}
-                        initialVisible={material.visible}
-                        collection="course_materials"
-                        onToggle={handleToggleVisibility} // Pass the callback function
-                      />
-                    )}
-                  </Card.Title> */}
                   {material.visible || user?.title === "professor" ? (
                     <>
                       <a
