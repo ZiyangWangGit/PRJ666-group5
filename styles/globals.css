@@ -113,7 +113,8 @@ body {
 
 /* Hover effect for tile cards */
 .tile-card:hover {
-  background-color: rgb(38, 45, 90); /* Darker background color on hover */
+  background-color: #262d5a; /* Darker background color on hover */
+  /* background-color: #8995e6; */
 }
 
 /* Responsive styles for tile cards */
@@ -229,9 +230,19 @@ body {
   }
 }
 
-.materialCardBody {
+/* .materialCardBody {
   display: flex;
   flex-direction: column;
+} */
+
+.materialCardBody {
+  position: relative;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .viewMaterialLink {

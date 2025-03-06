@@ -20,6 +20,7 @@ import { useUser } from "../../context/UserContext";
 import CourseLayout from "../../components/CourseLayout";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
+import HideToggleIcon from "../../components/HideToggleIcon"; // Import the HideToggleIcon component
 
 const storage = getStorage(app);
 const db = getFirestore(app);
@@ -204,6 +205,15 @@ export default function CoursePage() {
     }
   };
 
+  // Handle visibility toggle
+  const handleToggleVisibility = (id, newVisibility) => {
+    setMaterials((prevMaterials) =>
+      prevMaterials.map((material) =>
+        material.id === id ? { ...material, visible: newVisibility } : material
+      )
+    );
+  };
+
   // Ensure user is loaded before rendering
   if (!user) {
     return <p>Loading user data...</p>;
@@ -274,7 +284,29 @@ export default function CoursePage() {
             <Card key={material.id} className="secondary-card my-2">
               <Card.Body>
                 <div className="materialCardBody">
-                  <Card.Title>{material.name}</Card.Title>
+                  {/* <Card.Title>{material.name}</Card.Title> */}
+                  <div className="cardHeader">
+                    <Card.Title>{material.name}</Card.Title>
+                    {user?.title === "professor" && (
+                      <HideToggleIcon
+                        id={material.id}
+                        initialVisible={material.visible}
+                        collection="course_materials"
+                        onToggle={handleToggleVisibility} // Pass the callback function
+                      />
+                    )}
+                  </div>
+                  {/* <Card.Title>
+                    {material.name}
+                    {user?.title === "professor" && (
+                      <HideToggleIcon
+                        id={material.id}
+                        initialVisible={material.visible}
+                        collection="course_materials"
+                        onToggle={handleToggleVisibility} // Pass the callback function
+                      />
+                    )}
+                  </Card.Title> */}
                   {material.visible || user?.title === "professor" ? (
                     <>
                       <a
