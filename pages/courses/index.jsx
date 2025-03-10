@@ -21,7 +21,6 @@ import {
   MDBCol,
   MDBBtn,
 } from "mdb-react-ui-kit";
-import PageHeader from "@/components/PageHeader";
 
 const inter = Inter({ subsets: ["latin"] });
 

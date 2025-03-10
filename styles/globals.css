@@ -45,6 +45,14 @@ body {
 }
 
 /* Page header styles */
+.course-page-header {
+  color: white; /* White text */
+  font-size: 2.5rem; /* Large text */
+  text-align: left; /* Align text to the left */
+  margin-top: 1rem; /*Add some space below the header*/
+}
+
+/* Page header styles */
 .materal-header {
   color: white; /* White text */
   font-size: 2.5rem; /* Large text */
@@ -440,7 +448,7 @@ body {
 }
 
 .custom-delete-btn {
-  background-color: #734070;
+  background-color: #70619b;
   color: white;
   border: none;
   border-radius: 0.5rem;
@@ -451,5 +459,34 @@ body {
 }
 
 .custom-delete-btn:hover {
-  background-color: #4b2b4b;
+  background-color: #9f3ce1;
+}
+
+/* Sidebar styles */
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 300px;
+  height: 100%;
+  background-color: #fff;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+  transition: right 0.3s ease;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.sidebar.show {
+  right: 0;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.sidebar-content {
+  overflow-y: auto;
 }

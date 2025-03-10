@@ -2,12 +2,12 @@ import { Navbar, Nav, Container, Button } from "react-bootstrap";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";
-import { app } from "../lib/firebase";
-import { useUser } from "../context/UserContext";
+import { app } from "../../lib/firebase";
+import { useUser } from "../../context/UserContext";
 
 const db = getFirestore(app);
 
-export default function CourseNavbar({ courseName, courseId }) {
+export default function CourseNavbar({ courseName, courseId, onSelect }) {
   const [expanded, setExpanded] = useState(false);
   const [courseLocked, setCourseLocked] = useState(false);
   const [courseExists, setCourseExists] = useState(true);
@@ -77,26 +77,24 @@ export default function CourseNavbar({ courseName, courseId }) {
         <Navbar.Toggle aria-controls="course-navbar-nav" />
         <Navbar.Collapse id="course-navbar-nav">
           <Nav className="me-auto">
+            {/* <Nav.Link onClick={() => handleSelect("announcements")}>
+              Announcements
+            </Nav.Link> */}
             <Link
-              href="#announcements"
+              href="/courses/[courseId]/announcements"
+              as={`/courses/${courseId}/announcements`}
               passHref
-              style={{ textDecoration: "none" }}
+              legacyBehavior
             >
               <Nav.Link onClick={handleSelect}>Announcements</Nav.Link>
             </Link>
-            <Link href="#grades" passHref style={{ textDecoration: "none" }}>
-              <Nav.Link onClick={handleSelect}>Grades</Nav.Link>
-            </Link>
-            <Link href="#materials" passHref style={{ textDecoration: "none" }}>
-              <Nav.Link onClick={handleSelect}>Materials</Nav.Link>
-            </Link>
-            <Link
-              href="#assignments"
-              passHref
-              style={{ textDecoration: "none" }}
-            >
-              <Nav.Link onClick={handleSelect}>Assignments</Nav.Link>
-            </Link>
+            <Nav.Link onClick={() => handleSelect("grades")}>Grades</Nav.Link>
+            <Nav.Link onClick={() => handleSelect("materials")}>
+              Materials
+            </Nav.Link>
+            <Nav.Link onClick={() => handleSelect("assignments")}>
+              Assignments
+            </Nav.Link>
           </Nav>
           {user?.title === "professor" && (
             <Button

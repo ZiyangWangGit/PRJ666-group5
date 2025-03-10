@@ -12,16 +12,6 @@ export default function MainNav() {
   const [userInfo, setUserInfo] = useState({ id: "", name: "", email: "" });
   const [expanded, setExpanded] = useState(false);
 
-  // useEffect(() => {
-  //   if (router.query.id && router.query.name && router.query.email) {
-  //     setUserInfo({
-  //       id: router.query.id,
-  //       name: router.query.name,
-  //       email: router.query.email,
-  //     });
-  //   }
-  // }, [router.query]);
-
   const handleSelect = () => {
     setExpanded(false); // Collapse the navbar
   };

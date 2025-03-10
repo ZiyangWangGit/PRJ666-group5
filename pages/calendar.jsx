@@ -4,7 +4,6 @@ import Layout from "@/components/Layout";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import PageHeader from "@/components/PageHeader";
 import {
   getFirestore,
   collection,

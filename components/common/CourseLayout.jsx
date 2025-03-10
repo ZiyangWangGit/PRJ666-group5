@@ -1,7 +1,7 @@
 import CourseNavbar from "./CourseNavbar";
-import { useUser } from "../context/UserContext";
+import { useUser } from "../../context/UserContext";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
-import { app } from "../lib/firebase";
+import { app } from "../../lib/firebase";
 import { useState, useEffect } from "react";
 
 const db = getFirestore(app);

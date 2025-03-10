@@ -11,7 +11,6 @@ import {
   MDBCol,
   MDBBtn,
 } from "mdb-react-ui-kit";
-import PageHeader from "@/components/PageHeader";
 
 export default function Profile() {
   const { user } = useUser();
@@ -24,7 +23,7 @@ export default function Profile() {
       </Head>
       {user ? (
         <>
-          <PageHeader text={user.name} />
+          <h1 className="page-header"></h1>
           <MDBRow className="align-items-center">
             <MDBCol md="6" className="d-flex">
               <MDBCard className="main-card profile-card">
