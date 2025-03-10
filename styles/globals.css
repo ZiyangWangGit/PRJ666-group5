@@ -198,6 +198,28 @@ body {
   background-color: #2a3da9e7; /* Darker background color on hover */
 }
 
+.custom-select {
+  background-color: #dab8ffd7; /* Set the background color of the buttons */
+  /* color: #3d2aa9; Set the text color of the buttons */
+  /* color: white; /* Button text color */
+  border: white; /*Remove default border*/
+  /* border-color: #586adb; Set the border color of the buttons */
+  border-radius: 0.5rem; /* Rounded corners */
+  padding: 0.5rem 1rem; /* Padding for the button */
+  font-size: 1rem; /* Font size */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background-color 0.3s ease; /* Smooth transition for background color */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+.custom-select__control:hover,
+.custom-select__control:focus {
+  background-color: #586adb; /* Set the background color of the buttons */
+  border-color: #586adb; /* Set the border color of the buttons */
+  /* color: #3d2aa9; Set the text color of the buttons */
+}
+
 .buttonContainer {
   display: flex;
   justify-content: flex-end;

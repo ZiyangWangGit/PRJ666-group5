@@ -58,7 +58,7 @@ export default function AnnouncementForm({ courseId }) {
               disabled={loading}
             />
           </Form.Group>
-          <Button type="submit" disabled={loading}>
+          <Button className="custom-button" type="submit" disabled={loading}>
             {loading ? "Posting..." : "Post Announcement"}
           </Button>
           {message && (
