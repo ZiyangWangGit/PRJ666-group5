@@ -89,7 +89,7 @@ export default function Profile() {
 
               <MDBCard
                 className="main-card tile-card"
-                onClick={() => router.push("#")}
+                onClick={() => router.push("/grade")}
               >
                 <MDBCardBody>
                   <h3>Grades</h3>
