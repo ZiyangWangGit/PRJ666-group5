@@ -1,6 +1,23 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
+import Card from "react-bootstrap/Card";
+import Button from "react-bootstrap/Button";
+import Dropdown from "react-bootstrap/Dropdown";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  doc,
+  updateDoc,
+  query,
+  where,
+  getDoc,
+  deleteDoc,
+} from "firebase/firestore";
+import { app } from "../../../lib/firebase";
 import { useUser } from "../../../context/UserContext";
 import CourseLayout from "../../../components/common/CourseLayout";
 import AddAssignmentForm from "../../../components/Course/AddAssignmentForm";
@@ -8,6 +25,7 @@ import MaterialCard from "../../../components/Course/MaterialCard";
 import AnnouncementForm from "../../../components/announcements/AnnouncementForm";
 import AnnouncementList from "../../../components/announcements/AnnouncementList";
 import FormSelector from "../../../components/Common/FormSelector";
+import QuizCard from "../../../components/quizzes/QuizCard";
 import { useCourseData } from "../../../hooks/useCourseData";
 import { useAnnouncements } from "../../../hooks/useAnnouncements";
 import {
@@ -16,8 +34,7 @@ import {
   updateSubmission,
   addAssignment,
 } from "../../../lib/firebaseUtils";
-import { getFirestore, doc, deleteDoc } from "firebase/firestore";
-import { app } from "../../../lib/firebase";
+import { createQuiz } from "../../../services/quizService"; // Import the createQuiz function
 
 const db = getFirestore(app);
 
@@ -37,17 +54,40 @@ export default function CoursePage() {
     fetchAnnouncements,
   } = useAnnouncements(courseId);
   const [materials, setMaterials] = useState(initialMaterials);
+  const [quizzes, setQuizzes] = useState([]);
   const [newAssignment, setNewAssignment] = useState({
     name: "",
     file: null,
     visible: true,
   });
   const [selectedForm, setSelectedForm] = useState(null);
-  const [selectedSection, setSelectedSection] = useState("materials");
 
   useEffect(() => {
     setMaterials(initialMaterials);
   }, [initialMaterials]);
+
+  const fetchQuizzes = async () => {
+    try {
+      const q = query(
+        collection(db, "quizzes"),
+        where("courseId", "==", courseId)
+      );
+      const querySnapshot = await getDocs(q);
+      const data = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setQuizzes(data);
+    } catch (error) {
+      console.error("Error fetching quizzes:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (courseId) {
+      fetchQuizzes();
+    }
+  }, [courseId]);
 
   const handleSubmission = async (materialId, file) => {
     if (!file) return alert("Please select a file");
@@ -122,12 +162,16 @@ export default function CoursePage() {
     try {
       await deleteDoc(doc(db, "announcements", announcementId));
       alert("Announcement deleted successfully!");
-      // Refresh announcements after deletion
       await fetchAnnouncements();
     } catch (error) {
       console.error("Error deleting announcement:", error);
       alert("Failed to delete announcement. Please try again.");
     }
+  };
+
+  const handleCreateQuiz = async () => {
+    const newQuiz = await createQuiz(courseId);
+    router.push(`/courses/${courseId}/quizzes/${newQuiz.id}`);
   };
 
   if (!user) {
@@ -157,7 +201,19 @@ export default function CoursePage() {
               {selectedForm === "announcement" && (
                 <AnnouncementForm courseId={courseId} />
               )}
-              {/* Add other forms here as needed */}
+              <Dropdown className="my-3">
+                <Dropdown.Toggle variant="primary" id="dropdown-basic">
+                  New
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Dropdown.Item onClick={() => setSelectedForm("assignment")}>
+                    Add Assignment
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={handleCreateQuiz}>
+                    Add Quiz
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
             </>
           )}
 
@@ -180,6 +236,17 @@ export default function CoursePage() {
               handleToggleVisibility={handleToggleVisibility}
               submissions={submissions}
               handleGradeSubmission={handleGradeSubmission}
+            />
+          ))}
+
+          <h2 className="material-header">Quizzes</h2>
+          {quizzes.map((quiz) => (
+            <QuizCard
+              key={quiz.id}
+              quiz={quiz}
+              user={user}
+              courseId={courseId}
+              handleToggleVisibility={handleToggleVisibility}
             />
           ))}
         </>

@@ -71,15 +71,14 @@ export default function CourseNavbar({ courseName, courseId, onSelect }) {
       style={{ borderRadius: "0.5rem" }}
     >
       <Container>
-        <Navbar.Brand className="course-navbar-brand">
-          {courseName}
-        </Navbar.Brand>
+        <Link href={`/courses/${courseId}`} passHref legacyBehavior>
+          <Navbar.Brand className="course-navbar-brand">
+            {courseName}
+          </Navbar.Brand>
+        </Link>
         <Navbar.Toggle aria-controls="course-navbar-nav" />
         <Navbar.Collapse id="course-navbar-nav">
           <Nav className="me-auto">
-            {/* <Nav.Link onClick={() => handleSelect("announcements")}>
-              Announcements
-            </Nav.Link> */}
             <Link
               href="/courses/[courseId]/announcements"
               as={`/courses/${courseId}/announcements`}
@@ -88,10 +87,18 @@ export default function CourseNavbar({ courseName, courseId, onSelect }) {
             >
               <Nav.Link onClick={handleSelect}>Announcements</Nav.Link>
             </Link>
-            <Nav.Link onClick={() => handleSelect("grades")}>Grades</Nav.Link>
-            <Nav.Link onClick={() => handleSelect("materials")}>
-              Materials
-            </Nav.Link>
+            <Link href="/grade" as={`/grade`} passHref legacyBehavior>
+              <Nav.Link onClick={handleSelect}>Grades</Nav.Link>
+            </Link>
+            <Link
+              href="/courses/[courseId]/quizzes"
+              as={`/courses/${courseId}/quizzes`}
+              passHref
+              legacyBehavior
+            >
+              <Nav.Link onClick={handleSelect}>Quizzes</Nav.Link>
+            </Link>
+
             <Nav.Link onClick={() => handleSelect("assignments")}>
               Assignments
             </Nav.Link>
