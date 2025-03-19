@@ -2,14 +2,13 @@
 import { Container, Nav, Navbar } from "react-bootstrap";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { useUser } from "@/context/UserContext";
 
 export default function MainNav() {
   const router = useRouter();
   const { user } = useUser();
-  const [userInfo, setUserInfo] = useState({ id: "", name: "", email: "" });
   const [expanded, setExpanded] = useState(false);
 
   const handleSelect = () => {
@@ -40,24 +39,21 @@ export default function MainNav() {
             />
             SAUCE
           </Navbar.Brand>
-          {/* Toggle button for collapsing the navbar on smaller screens */}
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          {/* Collapsible navbar content */}
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-              {/* Link to the Profile page */}
-              <Link href={"/"} passHref legacyBehavior>
+              <Link href="/" passHref legacyBehavior>
                 <Nav.Link onClick={handleSelect}>Profile</Nav.Link>
               </Link>
-              {/* Link to the Courses page */}
               <Link href="/courses" passHref legacyBehavior>
                 <Nav.Link onClick={handleSelect}>Courses</Nav.Link>
               </Link>
-              {/* Link to the Calendar page */}
               <Link href="/calendar" passHref legacyBehavior>
                 <Nav.Link onClick={handleSelect}>Calendar</Nav.Link>
               </Link>
-              {/* Link to the Signin page */}
+              <Link href="/help" passHref legacyBehavior>
+                <Nav.Link onClick={handleSelect}>Help</Nav.Link>
+              </Link>
               <Link href="/signin" passHref legacyBehavior>
                 <Nav.Link onClick={handleSelect}>
                   {user ? "Signout" : "Signin"}
@@ -67,7 +63,6 @@ export default function MainNav() {
           </Navbar.Collapse>
         </Container>
       </Navbar>
-      {/* Spacing to ensure content is not hidden behind the fixed navbar */}
       <br />
       <br />
     </>
