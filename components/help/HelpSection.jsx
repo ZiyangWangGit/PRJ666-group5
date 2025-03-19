@@ -65,7 +65,7 @@ const HelpSection = () => {
           onChange={(e) => setMessage(e.target.value)}
           required
         ></textarea>
-        <button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">
+        <button type="submit" className="bg-blue-500 hover:bg-blue-600 text-black py-2 px-4 rounded">
           Send Message
         </button>
       </form>
