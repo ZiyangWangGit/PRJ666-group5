@@ -16,6 +16,7 @@ import {
   where,
   getDoc,
   deleteDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 import { app } from "../../../lib/firebase";
 import { useUser } from "../../../context/UserContext";
@@ -26,6 +27,7 @@ import AnnouncementForm from "../../../components/announcements/AnnouncementForm
 import AnnouncementList from "../../../components/announcements/AnnouncementList";
 import FormSelector from "../../../components/Common/FormSelector";
 import QuizCard from "../../../components/quizzes/QuizCard";
+import NotificationList from "../../../components/Notifications/NotificationList"; // Import NotificationList
 import { useCourseData } from "../../../hooks/useCourseData";
 import { useAnnouncements } from "../../../hooks/useAnnouncements";
 import {
@@ -93,6 +95,7 @@ export default function CoursePage() {
     if (!file) return alert("Please select a file");
 
     try {
+      // Upload the file and add the submission record
       const url = await uploadFile(
         `submissions/${materialId}/${file.name}`,
         file
@@ -107,6 +110,20 @@ export default function CoursePage() {
         feedback: null,
         courseId,
       });
+      
+   // Look up the assignment name from the materials list
+   const assignment = materials.find((m) => m.id === materialId);
+   const assignmentName = assignment ? assignment.name : materialId;
+
+   // Create a notification document including the assignment name and submission file name
+   await addDoc(collection(db, "notifications"), {
+     title: "New Submission",
+     message: `A new submission has been made by ${user.name || user.email} for assignment "${assignmentName}". Submission file: ${file.name}`,
+     createdAt: serverTimestamp(),
+     courseId,
+     type: "submission",
+   });
+
       alert("Submission uploaded successfully!");
     } catch (error) {
       console.error("Error uploading submission:", error);
@@ -189,33 +206,36 @@ export default function CoursePage() {
       ) : (
         <>
           {user?.title === "professor" && (
-            <>
-              <FormSelector onSelect={setSelectedForm} />
-              {selectedForm === "assignment" && (
-                <AddAssignmentForm
-                  newAssignment={newAssignment}
-                  setNewAssignment={setNewAssignment}
-                  handleAddAssignment={handleAddAssignment}
-                />
-              )}
-              {selectedForm === "announcement" && (
-                <AnnouncementForm courseId={courseId} />
-              )}
-              <Dropdown className="my-3">
-                <Dropdown.Toggle variant="primary" id="dropdown-basic">
-                  New
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  <Dropdown.Item onClick={() => setSelectedForm("assignment")}>
-                    Add Assignment
-                  </Dropdown.Item>
-                  <Dropdown.Item onClick={handleCreateQuiz}>
-                    Add Quiz
-                  </Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-            </>
-          )}
+  <>
+    <FormSelector onSelect={setSelectedForm} />
+    {selectedForm === "assignment" && (
+      <AddAssignmentForm
+        newAssignment={newAssignment}
+        setNewAssignment={setNewAssignment}
+        handleAddAssignment={handleAddAssignment}
+      />
+    )}
+    {selectedForm === "announcement" && (
+      <AnnouncementForm courseId={courseId} />
+    )}
+    <Dropdown className="my-3">
+      <Dropdown.Toggle variant="primary" id="dropdown-basic">
+        New
+      </Dropdown.Toggle>
+      <Dropdown.Menu>
+        <Dropdown.Item onClick={() => setSelectedForm("assignment")}>
+          Add Assignment
+        </Dropdown.Item>
+        <Dropdown.Item onClick={handleCreateQuiz}>
+          Add Quiz
+        </Dropdown.Item>
+      </Dropdown.Menu>
+    </Dropdown>
+    {/* Collapsible NotificationList for professors */}
+    <NotificationList courseId={courseId} />
+  </>
+)}
+
 
           {loadingAnnouncements ? (
             <p>Loading announcements...</p>
